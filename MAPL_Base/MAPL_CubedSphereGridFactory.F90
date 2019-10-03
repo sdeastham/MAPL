@@ -190,6 +190,7 @@ contains
       integer :: i,nTile
       integer, allocatable :: ims(:,:), jms(:,:)
       real(kind=ESMF_KIND_R8), pointer :: lats(:,:),lons(:,:)
+      real(kind=ESMF_KIND_R8), pointer :: lats_edges(:,:),lons_edges(:,:)
       type(ESMF_CS_Arguments) :: transformArgument
       integer :: status
       character(len=*), parameter :: Iam = MOD_NAME // 'create_basic_grid'
@@ -266,6 +267,16 @@ contains
          _VERIFY(status)
          lats=0.0
 
+         call ESMF_GridGetCoord(grid, coordDim=1, localDE=0, &
+            staggerloc=ESMF_STAGGERLOC_CORNER, &
+            farrayPtr=lons_edges, rc=status)
+         _VERIFY(status)
+         lons_edges=0.0
+         call ESMF_GridGetCoord(grid, coordDim=2, localDE=0, &
+            staggerloc=ESMF_STAGGERLOC_CORNER, &
+            farrayPtr=lats_edges, rc=status)
+         _VERIFY(status)
+         lats_edges=0.0
       end if
 
       deallocate(ims,jms)
@@ -818,6 +829,8 @@ contains
       integer :: status
 
       ! Grid dimensinos
+      call metadata%add_dimension('XEdim', this%im_world+1, rc=status)
+      call metadata%add_dimension('YEdim', this%im_world+1, rc=status)
       call metadata%add_dimension('Xdim', this%im_world, rc=status)
       call metadata%add_dimension('Ydim', this%im_world, rc=status)
       call metadata%add_dimension('nf', 6, rc=status)
@@ -944,6 +957,16 @@ contains
       call v%add_attribute('long_name','latitude')
       call v%add_attribute('units','degrees_north')
       call metadata%add_variable('lats',v)
+
+      v = Variable(PFIO_REAL32, dimensions='XEdim,YEdim,nf')
+      call v%add_attribute('long_name','edge longitude')
+      call v%add_attribute('units','degrees_east')
+      call metadata%add_variable('lons_edges',v)
+
+      v = Variable(PFIO_REAL32, dimensions='XEdim,YEdim,nf')
+      call v%add_attribute('long_name','edge latitude')
+      call v%add_attribute('units','degrees_north')
+      call metadata%add_variable('lats_edges',v)
 
    end subroutine append_metadata
 

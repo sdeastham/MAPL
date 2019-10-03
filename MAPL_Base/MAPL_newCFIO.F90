@@ -37,6 +37,7 @@ module MAPL_newCFIOMod
      integer :: regrid_method = REGRID_METHOD_BILINEAR
      integer :: nbits = 1000
      real, allocatable :: lons(:,:),lats(:,:)
+     real, allocatable :: lons_edges(:,:),lats_edges(:,:)
      real, allocatable :: times(:)
      type(TimeData) :: timeInfo
      type(VerticalData) :: vdata
@@ -534,7 +535,7 @@ module MAPL_newCFIOMod
      logical :: isCubed
      real(REAL64), pointer :: ptr2d(:,:)
      type(ArrayReference) :: ref
-     integer :: i1,in,j1,jn,tile
+     integer :: i1,in,j1,jn,tile,j1_edge
      integer :: global_dim(3)
 
      call MAPL_GridGet(this%output_grid,globalCellCountPerDim=global_dim,rc=status)
@@ -567,6 +568,28 @@ module MAPL_newCFIOMod
         call oClients%collective_stage_data(this%collection_id,trim(filename),'lats', &
                      ref,start=[i1,j1-tile*global_dim(1),tile+1], &
                      global_start=[1,1,1], global_count=[global_dim(1),global_dim(1),6])
+
+         call ESMF_GridGetCoord(this%output_grid, localDE=0, coordDim=1, &
+         staggerloc=ESMF_STAGGERLOC_CORNER, &
+         farrayPtr=ptr2d, rc=status)
+         _VERIFY(STATUS)
+         if (.not.allocated(this%lons_edges)) allocate(this%lons_edges(size(ptr2d,1),size(ptr2d,2)))
+         this%lons_edges=ptr2d*MAPL_RADIANS_TO_DEGREES
+         ref = ArrayReference(this%lons_edges)
+         call oClients%collective_stage_data(this%collection_id,trim(filename),'lons_edges', &
+                        ref,start=[i1,(1+(global_dim(1)+1)*tile)-tile*(global_dim(1)+1),tile+1], &
+                        global_start=[1,1,1], global_count=[(global_dim(1)+1),(global_dim(1)+1),6])
+         call ESMF_GridGetCoord(this%output_grid, localDE=0, coordDim=2, &
+         staggerloc=ESMF_STAGGERLOC_CORNER, &
+         farrayPtr=ptr2d, rc=status)
+         _VERIFY(STATUS)
+         if (.not.allocated(this%lats_edges)) allocate(this%lats_edges(size(ptr2d,1),size(ptr2d,2)))
+         ref = ArrayReference(ptr2d)
+         this%lats_edges=ptr2d*MAPL_RADIANS_TO_DEGREES
+         ref = ArrayReference(this%lats_edges)
+         call oClients%collective_stage_data(this%collection_id,trim(filename),'lats_edges', &
+                        ref,start=[i1,(1+(global_dim(1)+1)*tile)-tile*(global_dim(1)+1),tile+1], &
+                        global_start=[1,1,1], global_count=[global_dim(1)+1,global_dim(1)+1,6])
      end if
 
   end subroutine stage2DLatLon

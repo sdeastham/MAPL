@@ -2315,6 +2315,8 @@ CONTAINS
 
         type(ESMF_Time), allocatable               :: xTSeries(:)
         type(FileMetaDataUtils), pointer           :: fdata
+
+        character(len=ESMF_MAXSTR)                 :: err_msg
       
         call ESMF_TimeIntervalSet(zero,__RC__)
         call ESMF_TimeIntervalSet(yrTimeStep, yy=1, rc=rc)
@@ -2690,8 +2692,9 @@ CONTAINS
                     End If
                  End Do
                  if (status /= ESMF_SUCCESS) then
-                    if (mapl_am_I_root()) write(*,*)'ExtData could not find appropriate file from file template ',trim(item%file),' for side ',bSide
-                    _RETURN(ESMF_FAILURE)
+                    write(err_msg,*)'ExtData could not find appropriate file from file template ',trim(item%file),' for side ',bSide
+                    _FAIL(Trim(err_msg))
+                    !_RETURN(ESMF_FAILURE)
                  end if
               end if
 

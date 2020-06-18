@@ -667,6 +667,10 @@ contains
       class (CoordinateVariable), pointer :: v
       class (*), pointer :: ptr(:)
 
+      integer :: i_min, i_max
+      real(kind=REAL64) :: d_lat, tolerance, extrap_lat
+      logical :: is_even
+
       character(:), allocatable :: lon_name
       character(:), allocatable :: lat_name
       character(:), allocatable :: lev_name
@@ -785,6 +789,31 @@ contains
          else ! assume 'XY'
             this%dateline = 'XY'
             this%lon_range = RealMinMax(this%lon_centers(1), this%lon_centers(jm))
+         end if
+
+         ! Check: is this a "mis-specified" pole-centered grid (sometimes used in GEOS-Chem)?
+         tolerance = 0.05
+         if (size(this%lat_centers) >= 4) then
+            ! Assume lbound=1 and ubound=size for now
+            i_min = 1 !lbound(this%lat_centers)
+            i_max = size(this%lat_centers) !ubound(this%lat_centers)
+            d_lat = (this%lat_centers(i_max-1) - this%lat_centers(i_min+1))/&
+                     (size(this%lat_centers)-3)
+            ! Check: is this a regular grid (i.e. constant spacing away from the poles)?
+            is_even = all(abs(((this%lat_centers(i_min+2:i_max-1)-this%lat_centers(i_min+1:i_max-2))/d_lat)-1.0) < tolerance)
+            ! If so, perform final checks on each pole
+            if (is_even) then
+               ! Should the southernmost point actually be at the pole?
+               extrap_lat = -90.0d0 + d_lat/4.0d0
+               if ( abs(extrap_lat - this%lat_centers(i_min)) < (tolerance*d_lat) ) then
+                  this%lat_centers(i_min) = -90.0
+               end if
+               ! Should the northernmost point actually be at the pole?
+               extrap_lat = 90.0d0 - d_lat/4.0d0
+               if ( abs(extrap_lat - this%lat_centers(i_max)) < (tolerance*d_lat) ) then
+                  this%lat_centers(i_max) =  90.0
+               end if
+            end if
          end if
 
          this%lat_corners(1) = this%lat_centers(1) - (this%lat_centers(2)-this%lat_centers(1))/2

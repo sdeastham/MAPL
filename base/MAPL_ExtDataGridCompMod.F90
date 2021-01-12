@@ -1509,7 +1509,7 @@ CONTAINS
    call lgr%debug('ExtData Run_: READ_LOOP: Done')
 
    ! GCHP: extra prints
-   IF ( MAPL_Am_I_Root() .and. (firstRun .or. Ext_Debug > 0) ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: ---PopulateBundle'
    ENDIF
    bundle_iter = IOBundles%begin()
@@ -1537,7 +1537,7 @@ CONTAINS
    call MAPL_TimerOn(MAPLSTATE,"---prefetch")
 
    ! GCHP: extra prints
-   IF ( MAPL_Am_I_Root() .and. (firstRun .or. Ext_Debug > 0) ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: ---prefetch'
    ENDIF
 
@@ -1548,7 +1548,7 @@ CONTAINS
    call MAPL_TimerOn(MAPLSTATE,"---IclientDone")
 
    ! GCHP: extra prints
-   IF ( MAPL_Am_I_Root() .and. (firstRun .or. Ext_Debug > 0) ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: ---IclientDone'
    ENDIF
 
@@ -1561,7 +1561,7 @@ CONTAINS
    call MAPL_TimerOn(MAPLSTATE,"---read-prefetch")
 
    ! GCHP: extra prints
-   IF ( MAPL_Am_I_Root() .and. (firstRun .or. Ext_Debug > 0) ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: ---read-prefetch'
    ENDIF
 
@@ -1571,7 +1571,7 @@ CONTAINS
    call MAPL_TimerOff(MAPLSTATE,"--PRead")
 
    ! GCHP: extra prints
-   IF ( MAPL_Am_I_Root() .and. (firstRun .or. Ext_Debug > 0)  ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: Vertical interpolation'
    ENDIF
 
@@ -1642,7 +1642,7 @@ CONTAINS
    call MAPL_TimerOff(MAPLSTATE,"-Interpolate")
 
    ! GCHP: extra prints
-   IF ( (Ext_Debug > 0 .or. firstRun) .AND. MAPL_Am_I_Root() ) THEN
+   if (lgr%isEnabledFor(DEBUG)) then
       Write(*,*) 'ExtData Run_: Calculating derived fields'
    ENDIF
 
@@ -2996,17 +2996,13 @@ CONTAINS
            iEntry = targDOW + 1 + monthOffset
            fileTime = tSeries(iEntry)
            tindex = iEntry
-           if (Mapl_Am_I_Root().and.(Ext_Debug > 0)) then
-              write(*,'(a,I4,a,I4,4(a))') '               GetBracketTimeOnSingleFile: Reading data for DOW ',targDOW,' (entry ', iEntry, ') into bracket ', trim(bSide)
-              write(*,'(a,a)') &
-                 '                  ==> File: ', trim(fdata%get_file_name())
+           if (lgr%isEnabledFor(DEBUG)) then
+              call lgr%debug('               GetBracketTimeOnSingleFile: Reading data for DOW %i0.1 (entry %i0.4) into bracket %a', targDOW, iEntry, trim(bSide))
+              call lgr%debug('                  ==> File: %a', trim(fdata%get_file_name()))
               call ESMF_TimeGet(fileTime,yy=iyr,mm=imm,dd=idd,h=ihr,m=imn,s=isc,__RC__)
-              write(*,'(a,I0.2,a,I0.2,a)') &
-                 '                  ==> Data from: month ', iMm, ', day-of-week ', iDd, ' (01=Sunday)'
+              call lgr%debug('                  ==> Data from: month %i0.2 day-of-week %i0.1 (1=Sunday)', iMm, iDd)
               call ESMF_TimeGet(interpTime,yy=iyr,mm=imm,dd=idd,h=ihr,m=imn,s=isc,__RC__)
-              write(*,'(a,I0.4,a,I0.2,a,I0.2,a,I0.2,a,I0.2)') &
-                 '                  ==> Mapped to: ', iYr, '-', iMm, '-', iDd, &
-                 ' ', iHr, ':', iMn
+              call lgr%debug('                  ==> Mapped to: %i0.4~-%i0.2~-%i0.2 %i0.2~:%i0.2', iYr, iMm, iDd, iHr, iMn)
            end if
            rc = esmf_success
            return
@@ -4552,7 +4548,7 @@ CONTAINS
   end if
 
   ! GCHP: extra prints
-  if ( Ext_Debug > 0 .and. mapl_am_i_root() ) then
+  if (lgr%isEnabledFor(DEBUG)) then
      write(*,'(2(a,I4),3a)') '   --> MAPL_ExtDataFillField: filling ', lm_in, ' level input to ', lm_out, ' levels for ', trim(item%name)
   endif
 
@@ -4616,7 +4612,7 @@ CONTAINS
       end if
 
       ! GCHP: extra prints
-      if ( Ext_Debug > 0 .and. mapl_am_i_root() ) then
+      if (lgr%isEnabledFor(DEBUG)) then
          write(*,'(3a,2(x,I4))') '   --> MAPL_ExtDataFlipVertical: vertically flipping all levels for ', trim(item%name)
       end if
 

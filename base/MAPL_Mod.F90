@@ -28,7 +28,6 @@ module MAPL_Mod
 #ifdef USE_FLAP
   use MAPL_FlapCapOptionsMod
 #endif
-  use MAPL_CapMod
   use MAPL_MemUtilsMod
   use MAPL_HashMod
   use MAPL_LoadBalanceMod
@@ -36,16 +35,20 @@ module MAPL_Mod
   use MAPL_AbstractGridFactoryMod
   use MAPL_AbstractRegridderMod
   use MAPL_RegridderManagerMod
-  use MAPL_RegridderSpecMod
+  use MAPL_NewRegridderManager
+  use mapl_HorizontalFluxRegridder
+  use MAPL_RegridderSpec
+  use MAPL_RegridderTypeSpec
+  use MAPL_RegridMethods
   use MAPL_GridManagerMod
   use MAPL_LatLonGridFactoryMod
   use MAPL_CubedSphereGridFactoryMod
+  use MAPL_ExternalGridFactoryMod
   use MAPL_ShmemMod
   use MAPL_MaxMinMod
   use MAPL_SimpleBundleMod
   use MAPL_NewArthParserMod
   use MAPL_DirPathMod
-  use MAPL_ioClientsMod
   use MAPL_KeywordEnforcerMod
   use MAPL_SimpleCommSplitterMod
   use MAPL_SplitCommunicatorMod

@@ -8,9 +8,156 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 ### Changed
+
 ### Fixed
+
 ### Removed
+
+## [2.5.0] - 2021-01-08
+
+### Added
+
+- Added an `ExternalGridManager`, to allow MAPL to have knowledge of external grids (for NUOPC).
+- Added command line interface option `--isolate_nodes`. By default it is `.true.`
+- Add stretching factors to file if applicable in cubed-sphere output via History and uptick to cube version 2.91
+- Ability to register protoype (non-ESMF) regridders in NewRegridderManager
+- Make the default clobber rather than no clobber in NetCDF formatter in PFIO
+- Add basic check that the restart files match the application grid
+- Add new `MAPL_AddChildFromDSO` module procedure for `MAPL_AddChild`
+
+### Changed
+
+- Move MAPL_Cap, CapGridComp, and NUOPCwrapper to new directory in anticipation of refactored ExtData that will  not live in base
+- Convert `file(GLOB)` to explicit list
+- Moved modules into separate files.
+- Updated various modules to use the standard `_ASSERT()` and `_VERIFY()` macros instead of ad-hoc ones.
+- MAPL (sub-)libraries are now built as `TYPE SHARED` (needed for DSO work)
+- Updated `components.yaml`
+  - ESMA_env v3.1.3
+  - ESMA_cmake v3.3.5
+- Update CI image to use Baselibs v6.0.27
+
+## [2.4.0] - 2020-11-20
+
+### Added
+
+- Added ability to inject grid into root child GridComp (for NUOPC).
+- Added ability to use external clock (for NUOPC).
+- Enabled building and installing as a standalone library, using external dependencies.
+
+### Changed
+
+- Change CI Image to 6.0.22.
+- Updated `components.yaml`
+  - Move to ESMA_env v3.1.0
+  - Move to ESMA_cmake v3.3.0 (**REQUIRED** due to Baselibs detection changes and `find_package(FLAP)` moved to MAPL)
+  
+### Fixed
+
+- Bug in pfio tests when compiled with Debug flag
+- Bug in injecting grid into root child GridComp (for NUOPC).
+- Bug preventing components from advancing when an external clock is used
+
+## [2.3.6] - 2020-11-12
+
+### Added
+
+- Added an external grid and clock setter (for NUOPC).
+
+### Fixed
+
+- Fixed logic to allow proper termination of all imports except those specified
+
+## [2.3.5] - 2020-11-06
+
+### Added
+
+- Added fixture entry to `components.yaml` (requires mepo v1.23.0 or higher)
+
+### Fixed
+
+- Fixed integer overflow in memutils for big memory systems
+- Fix bug with segment alarm when processing a monthly mean collection
+
+
+## [2.3.4] - 2020-10-20
+
+### Changed
+
+- Increased the width of the `#-cycles` column in profiler output
+- Added Docker authentication to CI
+- Updated mepo components to match GEOSgcm
+
+### Fixed
+
+- Fixed bug with reading in cubed-sphere files that have the corners
+
+## [2.3.3] - 2020-10-14
+
+## Fixed
+
+- Fix bug with using coarse grids in History and ExtData
+
+## [2.3.2] - 2020-10-09
+
+### Fixed
+
+- Fixed a bug in ExtData when extrapolating on a Leap Day (#563)
+
+### Added
+
+- Added a deflate and bit shaving option to Regrid_Util.x
+
+### Changed
+
+- Updated Github Docker CI image
+
+## [2.3.1] - 2020-10-08
+
+### Fixed
+
+- Fixed bug in ExtData when using debug logger
+
+## [2.3.0] - 2020-10-02
+
+### Added
+
+- Add MultiComm, MultiGroupi and MultiLayer to include front ends and back ends in the oserver
+- Added routine to finalize the ioservers so that it can be called by another application using cap, like JEDI
+- Re-added CircleCI with FV3 standalone test
+- Add ability to run multiple forward time integrations within one execution for JEDI (#529)
+- Added mpeu `StrTemplate` replacement to MAPL
+
+### Changed
+
+- Automate the server pool split and history work distribution when there are multiple oservers
+- Moved more code to use pFlogger
+- Update to ESMA_cmake v3.2.1 and ESMA_env v3.0.0
+- Update GitHub Actions to use Ubuntu 20/GCC 10 image
+- Updated CircleCI image to use 6.0.16 Baselibs
+- Refactor the option WRITE_RESTART_BY_OSERVER
+- Change the writing rank calculation in ServerThread.F90
+- Cleanup of the NUOPC Wrapper's error handling using macros
+
+
+### Fixed
+
+- Removed non-standard OpenMP pragma
+- Fixed problem with name mangling in ACG
+- Fix MAPL comm bug with NUOPC
+- Fixed pointer issue exposed by GNU
+- Fixed ESMF logging errors with non-72-level runs (#480)
+- Remove unneeded `use Env;` in stub generator
+- Fixed tripolar metadata output (#528)
+- Fixed `MAPL_ErrLogMain.h` for use with GSI_App
+- Added MAPL_CFIOReadParallel change from Ricardo for TimeList
+
+### Removed
+
+- Remove MAPL_ioClients.F90 and move some subroutines to ClientManager.F90
+- Remove unneeded GNU make file
 
 ## [2.2.7] - 2020-06-26
 
@@ -108,6 +255,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed duplicate `Python` directory
 - Removed CircleCI
 
+## [2.1.6] - 2020-07-08
+
+### Changed
+
+- Updates for JEDI/ecbuild compatibility
+  - Updates to CMake to use `NOINSTALL`
+  - Updates to `components.yaml` to support use of `NOINSTALL`
+
 ## [2.1.5] - 2020-06-11
 
 ### Changed
@@ -175,7 +330,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected Python code generator scripts for component import/export specs.
 - Add directories to `.gitignore` for building with `mepo`
 - Bug building with mixed Intel/GCC compilers
-- Implemented workaround to cmake error that happens when building tests in parallel.	
+- Implemented workaround to cmake error that happens when building tests in parallel.
 - Set correct ESMA_env tag in `components.yaml`
 - Updated `components.yaml` to be inline with GEOSgcm
 - Minor problem in GMAO_pFIO Cmakelists (consistency with PRIVATE)
@@ -194,7 +349,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Builds and runs `pFIO_tests` and `MAPL_Base_tests`
 - Add precession of equinox (not on by default)
 - Imported Python/MAPL subdir (old, but never imported to GitHub)
-- Python automatic code generator for grid comp include files	
+- Python automatic code generator for grid comp include files
 - Added support to use pFlogger for logging
   - Command line option: `--logging_config=<file>`
 - Added ability for History to do monthly mean. This also involves reading and writing MAPL_GenericCpl checkpoints

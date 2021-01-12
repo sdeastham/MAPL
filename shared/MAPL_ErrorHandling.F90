@@ -265,6 +265,7 @@ contains
         end if
         ! GCHP: comment out OpenMP serial directive to avoid ifort19 compiler error
         !!$OMP end serial
+
      end subroutine initialize_err
 
   end function get_error_message

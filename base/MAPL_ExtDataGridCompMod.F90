@@ -3002,7 +3002,7 @@ CONTAINS
            iEntry = targDOW + 1 + monthOffset
            fileTime = tSeries(iEntry)
            tindex = iEntry
-           call lgr%debug('Reading DOW data from %a', trim(fdata%get_file_name))
+           call lgr%debug('Reading DOW data from %a', trim(fdata%get_file_name()))
            ! Below needs to be translated to lgr (SDE 2021-01-19)
            !if (Mapl_Am_I_Root().and.(Ext_Debug > 0)) then
            !   write(*,'(a,I4,a,I4,4(a))') '               GetBracketTimeOnSingleFile: Reading data for DOW ',targDOW,' (entry ', iEntry, ') into bracket ', trim(bSide)

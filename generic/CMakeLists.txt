@@ -30,9 +30,12 @@ set (srcs
   MaplGeneric.F90
   )
 
-find_package(PFLOGGER REQUIRED)
-find_package(GFTL REQUIRED)
-find_package(GFTL_SHARED REQUIRED)
+option(MONOLITH "Build supporting GMAO packages instead of looking for them" OFF)
+if (NOT MONOLITH)
+   find_package(PFLOGGER REQUIRED)
+   find_package(GFTL REQUIRED)
+   find_package(GFTL_SHARED REQUIRED)
+endif ()
 
 esma_add_library(${this} SRCS ${srcs} DEPENDENCIES MAPL.shared pflogger gftl-shared gftl)
 target_include_directories (${this} PUBLIC

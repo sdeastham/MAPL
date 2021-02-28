@@ -129,7 +129,7 @@ contains
              do i  = 1, IM
                 m_y = 0
                 do ii = 1 + (i-1)*N, i*N
-                   m_y = m_y + v_in(ii,j)
+                   m_y = m_y + v_in(ii,jj)
                 end do
                 v_out(i,j) = m_y
              end do
@@ -141,7 +141,7 @@ contains
              do j  = 1, JM
                 m_x = 0
                 do jj = 1 + (j-1)*N, j*N
-                   m_x = m_x + u_in(i,jj)
+                   m_x = m_x + u_in(ii,jj)
                 end do
                 u_out(i,j) = m_x
              end do

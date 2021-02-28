@@ -1082,7 +1082,7 @@ CONTAINS
       else if (item%vartype == MAPL_ExtDataVectorItem) then
      
          ! Only some methods are supported for vector regridding
-         _ASSERT(any(item%Trans /= [REGRID_METHOD_BILINEAR,REGRID_METHOD_CONSERVE_HFLUX]), 'Regrid method unsupported for vectors.')
+         !_ASSERT(any(item%Trans /= [REGRID_METHOD_BILINEAR,REGRID_METHOD_CONSERVE_HFLUX]), 'Regrid method unsupported for vectors.')
 
          block
             integer :: gridRotation1, gridRotation2
